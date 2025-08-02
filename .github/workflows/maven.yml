@@ -6,7 +6,8 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: CI/CD Pipelin
+name: CI/CD Pipeline
+
 on:
   push:
     branches: [ main ]
@@ -21,12 +22,12 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: abhi@18
+          MYSQL_ROOT_PASSWORD: abhi@18
+          MYSQL_DATABASE: hospitaldb
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping"
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
@@ -41,13 +42,17 @@ jobs:
         distribution: 'temurin'
         java-version: 17
 
+    - name: Make mvnw executable
+      working-directory: hospital_backend/hospital
+      run: chmod +x mvnw
+
     - name: Build Spring Boot backend
-      working-directory: backend
-      run: mvn clean install
+      working-directory: hospital_backend/hospital
+      run: ./mvnw clean install
 
     - name: Run backend tests
-      working-directory: backend
-      run: mvn test
+      working-directory: hospital_backend/hospital
+      run: ./mvnw test
 
     - name: Set up Node.js
       uses: actions/setup-node@v3
@@ -55,16 +60,15 @@ jobs:
         node-version: 18
 
     - name: Install frontend dependencies
-      working-directory: frontend
+      working-directory: hospital_frontend
       run: npm install
 
     - name: Build frontend
-      working-directory: frontend
+      working-directory: hospital_frontend
       run: npm run build
 
     - name: Run frontend tests
-      working-directory: frontend
+      working-directory: hospital_frontend
       run: npm test
 
-    # Optional: deploy step (e.g., to Heroku, Netlify, Render)
-
+    # Add deploy steps here if needed
