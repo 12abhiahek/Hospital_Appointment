@@ -47,11 +47,11 @@ jobs:
       run: chmod +x mvnw
 
     - name: Build Spring Boot backend
-      working-directory: hospital_backend/hospital
+      working-directory: hospital_backend
       run: ./mvnw clean install
 
     - name: Run backend tests
-      working-directory: hospital_backend/hospital
+      working-directory: hospital_backend
       run: ./mvnw test
 
     - name: Set up Node.js
